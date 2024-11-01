@@ -1,20 +1,23 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
-from config import Config
 
-def create_app(config_class=Config):
+def create_app():
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    
+    # Enable CORS with specific settings
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": ["http://localhost:3000", "http://127.0.0.1:3000"],
+            "methods": ["GET", "OPTIONS"],
+            "allow_headers": ["Accept", "Content-Type"]
+        }
+    })
 
-    # Initialize CORS
-    CORS(app)
-
-    # Register blueprints 
     from routes.hello import bp as hello_bp
     app.register_blueprint(hello_bp)
-
+    
     return app
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True)
+    app.run(debug=True, host='127.0.0.1', port=5000)
